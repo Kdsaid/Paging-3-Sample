@@ -46,7 +46,6 @@ class MainActivity : AppCompatActivity() {
         movieAdapter.addLoadStateListener { loadState ->
 
             if (loadState.refresh is LoadState.Loading) {
-
                 // Show ProgressBar
                 progressBar.visibility = View.VISIBLE
             }
