@@ -2,14 +2,19 @@ package com.training.pagingsample.ui.screen
 
 import androidx.lifecycle.ViewModel
 import androidx.paging.*
+import com.training.pagingsample.data.local.MovieAppDB
 import com.training.pagingsample.data.model.Movie
 import com.training.pagingsample.data.repository.Repository
 import com.training.pagingsample.data.repository.paged.MoviePagingSource
+import com.training.pagingsample.data.repository.paged.MovieRemoteMediator
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class MainViewModel(private val repository: Repository) : ViewModel() {
+class MainViewModel(
+    private val repository: Repository,
+    private val movieAppDB: MovieAppDB
+) : ViewModel() {
 
     val movies: Flow<PagingData<MovieModel>> = getMovieListStream()
         .map { pagingData -> pagingData.map { MovieModel.MovieItem(it) } }
@@ -41,9 +46,11 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
 
 
     private fun getMovieListStream() : Flow<PagingData<Movie>>{
-        return Pager(PagingConfig(20)) {
-            MoviePagingSource(repository)
-        }.flow
+        return Pager(
+            config = PagingConfig(20),
+            remoteMediator = MovieRemoteMediator(repository, movieAppDB),
+            pagingSourceFactory = { movieAppDB.getMovieDao().loadMovies() }
+        ).flow
     }
 }
 

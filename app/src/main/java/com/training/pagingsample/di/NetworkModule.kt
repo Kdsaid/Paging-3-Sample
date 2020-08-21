@@ -1,5 +1,6 @@
 package com.training.pagingsample.di
 
+import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.training.pagingsample.BuildConfig
 import com.training.pagingsample.data.network.Api
 import com.training.pagingsample.data.network.MovieAppService
@@ -39,6 +40,7 @@ fun okhttpClient(
     headerInterceptor: Interceptor
 ) : OkHttpClient =
     OkHttpClient.Builder()
+        .addNetworkInterceptor(StethoInterceptor())
     .addInterceptor(headerInterceptor)
     .build()
 
